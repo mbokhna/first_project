@@ -36,10 +36,12 @@ Note: the AI chat parts (8-10) are deferred until the rest of the app (Parts 2-7
 
 ## Part 4: Add in a fake user sign in experience
 
-- [ ] Add a login page/screen requiring hardcoded credentials (`user` / `password`) before the Kanban board is shown.
-- [ ] Add a logout action that returns to the login screen.
-- [ ] Decide and implement session handling for the MVP (e.g. simple cookie/token issued by the backend on login).
-- [ ] Protect the Kanban route/API so it isn't visible without being "logged in".
+- [x] Add a login page/screen requiring hardcoded credentials (`user` / `password`) before the Kanban board is shown.
+- [x] Add a logout action that returns to the login screen.
+- [x] Decide and implement session handling for the MVP (e.g. simple cookie/token issued by the backend on login).
+- [x] Protect the Kanban route/API so it isn't visible without being "logged in".
+
+Implemented as a signed session cookie (Starlette `SessionMiddleware`) set by `POST /api/login`, checked via `GET /api/session`. The board itself isn't yet backed by a real per-user API (that's Part 6/7) — for now `page.tsx` just gates rendering `KanbanBoard` behind the session check.
 
 **Tests:** unit tests for the login form/validation; e2e tests for: visiting `/` while logged out shows login, wrong credentials are rejected, correct credentials show the board, logout returns to login.
 

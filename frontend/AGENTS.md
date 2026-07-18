@@ -30,8 +30,15 @@
 - The board itself is still a **frontend-only demo**: no auth/login, no fetch calls, no database yet. All data lives in memory (`initialData` + local component state).
 - `next.config.ts` uses `output: "export"` — `npm run build` produces a static `out/` directory with no Node server required. The root `Dockerfile` builds this and copies `out/` into the FastAPI backend's `static/` folder, which serves it at `/` (see Part 3 in `docs/PLAN.md`).
 - No client-side routing, `next/image`, or other features that are incompatible with static export are used, so this conversion was drop-in.
-- Auth, SQLite persistence, and the AI chat are not wired in yet — those come in later plan parts.
+- SQLite persistence and the AI chat are not wired in yet — those come in later plan parts.
 - `data-testid` attributes (`column-<id>`, `card-<id>`) are already in place and used by both Playwright e2e tests and future automation.
+
+## Auth
+
+- `src/app/page.tsx` is a client component that checks `GET /api/session` on mount and renders either `LoginForm` or `KanbanBoard`.
+- `src/components/LoginForm.tsx` posts to `/api/login`; `src/lib/api.ts` wraps `login`/`logout`/`getSession` fetch calls (`credentials: "include"` so the backend's session cookie is sent/stored).
+- `KanbanBoard` takes an optional `onLogout` prop; when provided it renders a "Log out" button that calls `/api/logout`.
+- **Important:** these fetch calls hit the FastAPI backend at the same origin. `npm run dev` (port 3000) has no backend behind it, so login will always fail there — the app must be tested via the Docker container (`scripts/start.sh`), which serves frontend and backend from the same origin on port 8000. `frontend/tests/kanban.spec.ts` runs against that container by setting `PLAYWRIGHT_TEST_BASE_URL=http://localhost:8000` (see `playwright.config.ts`).
 
 ## Testing
 
