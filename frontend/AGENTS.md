@@ -27,11 +27,19 @@
 
 ## What this is / isn't
 
-- The board itself is still a **frontend-only demo**: no auth/login, no fetch calls, no database yet. All data lives in memory (`initialData` + local component state).
+- The board is now fully backed by the FastAPI + SQLite backend (Part 7) — no more in-memory `initialData`; state persists across reloads and logins.
 - `next.config.ts` uses `output: "export"` — `npm run build` produces a static `out/` directory with no Node server required. The root `Dockerfile` builds this and copies `out/` into the FastAPI backend's `static/` folder, which serves it at `/` (see Part 3 in `docs/PLAN.md`).
 - No client-side routing, `next/image`, or other features that are incompatible with static export are used, so this conversion was drop-in.
-- SQLite persistence and the AI chat are not wired in yet — those come in later plan parts.
+- The AI chat is not wired in yet — that's Part 8+ (deferred, see `docs/PLAN.md`).
 - `data-testid` attributes (`column-<id>`, `card-<id>`) are already in place and used by both Playwright e2e tests and future automation.
+- **Known gap:** the root `AGENTS.md` business requirements say cards can be "edited," but the existing UI (inherited from the starting-point demo) only ever supported add/delete/move/rename-column — there's no edit-card-title/details UI. The backend route (`PATCH /api/board/cards/{card_id}`) exists and is tested, but nothing in the frontend calls it yet. Flagging for the end-of-Part-7 review.
+
+## Board data flow (Part 7)
+
+- `KanbanBoard.tsx` fetches `GET /api/board` on mount (loading/error states shown while pending), and calls the matching API function from `src/lib/api.ts` for every mutation — the backend's response (full board) becomes the new state, so the UI is always showing server-confirmed data.
+- Column rename is optimistic-while-typing (`onRename` updates local state per keystroke, no request) and only persisted on blur (`onRenameCommit` calls `PATCH /api/board/columns/{id}`), to avoid firing a request per keystroke.
+- Drag-and-drop (`handleDragEnd`) applies `moveCard` (the existing pure reducer in `src/lib/kanban.ts`) locally first for instant visual feedback, then calls `POST /api/board/cards/{id}/move` with the resulting column + index and reconciles state with the response.
+- `src/lib/kanban.ts` no longer exports `initialData`/`createId` (both unused now that ids and seed data come from the backend) — only the `Card`/`Column`/`BoardData` types and the `moveCard` pure function remain, still covered by `src/lib/kanban.test.ts`.
 
 ## Auth
 

@@ -73,9 +73,11 @@ Verified manually end-to-end via curl (login, get board, add/move/rename/update/
 
 ## Part 7: Frontend + Backend
 
-- [ ] Replace the frontend's in-memory `initialData`/local state with real calls to the backend API for load and every mutation (rename, add, delete, move).
-- [ ] Handle loading and error states in the UI.
-- [ ] Confirm state persists across page reloads and logins.
+- [x] Replace the frontend's in-memory `initialData`/local state with real calls to the backend API for load and every mutation (rename, add, delete, move).
+- [x] Handle loading and error states in the UI.
+- [x] Confirm state persists across page reloads and logins.
+
+Known gap carried into the end-of-Part-7 review: the frontend has no UI for editing a card's title/details after creation (only add/delete/move/rename-column existed in the starting-point demo). The backend's `PATCH /api/board/cards/{card_id}` route exists and is tested, just not called from the UI yet.
 
 **Tests:** update/extend Vitest unit tests for API-integrated components; extend Playwright e2e tests to verify persistence (reload the page and confirm changes survive).
 

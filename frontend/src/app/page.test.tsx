@@ -17,6 +17,12 @@ const mockFetch = (authenticated: boolean, loginOk: boolean) => {
       if (url.endsWith("/api/logout")) {
         return new Response(null, { status: 200 });
       }
+      if (url.endsWith("/api/board")) {
+        return new Response(
+          JSON.stringify({ columns: [], cards: {} }),
+          { status: 200 }
+        );
+      }
       throw new Error(`Unexpected fetch: ${url} ${init?.method ?? "GET"}`);
     })
   );
