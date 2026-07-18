@@ -61,9 +61,11 @@ See [`schema.json`](./schema.json) and [`DATABASE.md`](./DATABASE.md). Per user 
 
 ## Part 6: Backend
 
-- [ ] Implement the SQLite database using the approved schema; create the DB file on first run if it doesn't exist.
-- [ ] Add API routes to read a user's Kanban board and to change it (rename column, add/edit/delete/move card).
-- [ ] Write backend unit tests covering each route, including edge cases (missing board, invalid ids, etc.).
+- [x] Implement the SQLite database using the approved schema; create the DB file on first run if it doesn't exist.
+- [x] Add API routes to read a user's Kanban board and to change it (rename column, add/edit/delete/move card).
+- [x] Write backend unit tests covering each route, including edge cases (missing board, invalid ids, etc.).
+
+Verified manually end-to-end via curl (login, get board, add/move/rename/update/delete) against a running `uv run uvicorn` server, plus 11 pytest tests (auth + board) all passing, each against an isolated temp-file DB.
 
 **Tests:** `pytest` (or equivalent) covering all new routes and DB logic; run against a throwaway/test SQLite DB.
 
