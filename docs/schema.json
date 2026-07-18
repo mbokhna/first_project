@@ -1,0 +1,40 @@
+{
+  "users": {
+    "description": "One row per user. MVP only ever has one user (seeded), created via login with hardcoded credentials, but the schema supports many.",
+    "columns": {
+      "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
+      "username": "TEXT NOT NULL UNIQUE",
+      "created_at": "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    }
+  },
+  "boards": {
+    "description": "One row per board. MVP: exactly one board per user.",
+    "columns": {
+      "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
+      "user_id": "INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE",
+      "created_at": "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+    "constraints": ["UNIQUE(user_id)"]
+  },
+  "kanban_columns": {
+    "description": "A column on a board (e.g. Backlog, In Progress). Named kanban_columns to avoid clashing with the SQL term 'column'.",
+    "columns": {
+      "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
+      "board_id": "INTEGER NOT NULL REFERENCES boards(id) ON DELETE CASCADE",
+      "title": "TEXT NOT NULL",
+      "position": "INTEGER NOT NULL"
+    },
+    "notes": "position determines left-to-right column order on the board, 0-based."
+  },
+  "cards": {
+    "description": "A card within a column.",
+    "columns": {
+      "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
+      "column_id": "INTEGER NOT NULL REFERENCES kanban_columns(id) ON DELETE CASCADE",
+      "title": "TEXT NOT NULL",
+      "details": "TEXT NOT NULL DEFAULT ''",
+      "position": "INTEGER NOT NULL"
+    },
+    "notes": "position determines top-to-bottom card order within its column, 0-based. Moving a card between columns updates column_id and re-numbers position in both the source and destination columns."
+  }
+}

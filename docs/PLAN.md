@@ -49,13 +49,15 @@ Implemented as a signed session cookie (Starlette `SessionMiddleware`) set by `P
 
 ## Part 5: Database modeling
 
-- [ ] Propose a database schema for users, boards, columns, and cards (as JSON in `docs/`, e.g. `docs/schema.json` or `docs/DATABASE.md`).
-- [ ] Document the approach: tables/entities, relationships, how the MVP's "1 board per user" constraint is represented while allowing multiple users/boards in the future.
+- [x] Propose a database schema for users, boards, columns, and cards (as JSON in `docs/`, e.g. `docs/schema.json` or `docs/DATABASE.md`).
+- [x] Document the approach: tables/entities, relationships, how the MVP's "1 board per user" constraint is represented while allowing multiple users/boards in the future.
 - [ ] Get explicit user sign-off on the schema before implementing it.
 
 **Tests:** none (design step) — reviewed by the user instead.
 
 **Success criteria:** user has reviewed and approved the schema document before Part 6 starts.
+
+See [`schema.json`](./schema.json) and [`DATABASE.md`](./DATABASE.md). Per user instruction, implementation (Part 6) proceeds without a mid-flow pause — full review happens at the end of Part 7, before Part 8 (AI).
 
 ## Part 6: Backend
 
