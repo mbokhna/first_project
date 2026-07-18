@@ -1,3 +1,13 @@
+FROM node:22-slim AS frontend-build
+
+WORKDIR /frontend
+
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+
+COPY frontend ./
+RUN npm run build
+
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 WORKDIR /app
@@ -6,7 +16,7 @@ COPY backend/pyproject.toml backend/uv.lock ./
 RUN uv sync --locked --no-install-project
 
 COPY backend/app ./app
-COPY backend/static ./static
+COPY --from=frontend-build /frontend/out ./static
 
 ENV PATH="/app/.venv/bin:$PATH"
 

@@ -27,8 +27,10 @@
 
 ## What this is / isn't
 
-- This is a **frontend-only demo**: no backend, no auth/login, no fetch calls, no database. All data lives in memory (`initialData` + local component state).
-- Not yet wired to Docker, FastAPI, SQLite, or the AI chat — those come in later plan parts.
+- The board itself is still a **frontend-only demo**: no auth/login, no fetch calls, no database yet. All data lives in memory (`initialData` + local component state).
+- `next.config.ts` uses `output: "export"` — `npm run build` produces a static `out/` directory with no Node server required. The root `Dockerfile` builds this and copies `out/` into the FastAPI backend's `static/` folder, which serves it at `/` (see Part 3 in `docs/PLAN.md`).
+- No client-side routing, `next/image`, or other features that are incompatible with static export are used, so this conversion was drop-in.
+- Auth, SQLite persistence, and the AI chat are not wired in yet — those come in later plan parts.
 - `data-testid` attributes (`column-<id>`, `card-<id>`) are already in place and used by both Playwright e2e tests and future automation.
 
 ## Testing

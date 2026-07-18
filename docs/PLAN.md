@@ -26,9 +26,9 @@ Note: the AI chat parts (8-10) are deferred until the rest of the app (Parts 2-7
 
 ## Part 3: Add in Frontend
 
-- [ ] Configure the FastAPI backend to statically build the Next.js app (`next build`) and serve the output at `/`.
-- [ ] Confirm the existing Kanban demo (from `frontend/`) renders correctly when served this way, not just via `next dev`.
-- [ ] Add/confirm frontend unit tests (Vitest) and integration/e2e tests (Playwright) run against the built, backend-served app.
+- [x] Configure the FastAPI backend to statically build the Next.js app (`next build`) and serve the output at `/`.
+- [x] Confirm the existing Kanban demo (from `frontend/`) renders correctly when served this way, not just via `next dev`.
+- [x] Add/confirm frontend unit tests (Vitest) and integration/e2e tests (Playwright) run against the built, backend-served app.
 
 **Tests:** `npm run test:unit`, `npm run test:e2e` (pointed at the Dockerized app), plus a manual check that `/` shows the Kanban board through the backend, not the Next dev server.
 
