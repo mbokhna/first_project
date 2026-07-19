@@ -4,13 +4,16 @@ from collections.abc import Generator
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
-from app import board, db
+load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
+
+from app import ai, board, db  # noqa: E402
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 SESSION_SECRET = os.environ.get("SESSION_SECRET", "dev-secret-change-me")
@@ -179,6 +182,15 @@ def move_card(
         return board.get_board(conn, username)
     except board.NotFoundError as error:
         raise HTTPException(status_code=404, detail=str(error))
+
+
+@app.get("/api/ai/ping")
+def ai_ping(username: str = Depends(require_user)) -> dict[str, str]:
+    try:
+        reply = ai.ask("What is 2+2? Reply with only the number, no words.")
+    except RuntimeError as error:
+        raise HTTPException(status_code=503, detail=str(error))
+    return {"reply": reply}
 
 
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")

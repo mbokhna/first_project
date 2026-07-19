@@ -85,12 +85,14 @@ Known gap carried into the end-of-Part-7 review: the frontend has no UI for edit
 
 ## Part 8: AI connectivity
 
-- [ ] Add OpenRouter client setup in the backend, reading `OPENROUTER_API_KEY` from `.env`.
-- [ ] Add a simple backend test route/function that asks the AI "what is 2+2" and checks the response, to confirm connectivity end-to-end using `openai/gpt-oss-120b`.
+- [x] Add OpenRouter client setup in the backend, reading `OPENROUTER_API_KEY` from `.env`.
+- [x] Add a simple backend test route/function that asks the AI "what is 2+2" and checks the response, to confirm connectivity end-to-end.
 
 **Tests:** an automated (or documented manual) test that calls the AI and asserts a sane response to "2+2".
 
 **Success criteria:** the "2+2" test call succeeds and returns a correct-looking answer, confirming API key and model wiring work.
+
+**Deviation from the original plan:** using `openai/gpt-oss-20b:free` instead of `openai/gpt-oss-120b` — per user instruction, no OpenRouter billing/credits. OpenRouter's `openai/gpt-oss-120b:free` no longer exists (only the paid 120b remains; confirmed via a live 404 from their API), so the free 20b sibling is used instead. Verified both via `uv run pytest` (real API call) and via `GET /api/ai/ping` through the full Docker container.
 
 ## Part 9: AI + Kanban context
 
