@@ -28,9 +28,7 @@ def _get_user_id(conn: sqlite3.Connection, username: str) -> int:
 
 
 def _get_board_id(conn: sqlite3.Connection, user_id: int) -> int:
-    row = conn.execute(
-        "SELECT id FROM boards WHERE user_id = ?", (user_id,)
-    ).fetchone()
+    row = conn.execute("SELECT id FROM boards WHERE user_id = ?", (user_id,)).fetchone()
     if row is None:
         raise NotFoundError("No board for this user")
     return row["id"]
@@ -61,7 +59,9 @@ def _card_ids_in_column(conn: sqlite3.Connection, column_id: int) -> list[int]:
     return [row["id"] for row in rows]
 
 
-def _renumber_column(conn: sqlite3.Connection, column_id: int, card_ids: list[int]) -> None:
+def _renumber_column(
+    conn: sqlite3.Connection, column_id: int, card_ids: list[int]
+) -> None:
     for position, card_id in enumerate(card_ids):
         conn.execute(
             "UPDATE cards SET column_id = ?, position = ? WHERE id = ?",
@@ -123,9 +123,7 @@ def rename_column(conn: sqlite3.Connection, column_id: str, title: str) -> None:
     conn.commit()
 
 
-def add_card(
-    conn: sqlite3.Connection, column_id: str, title: str, details: str
-) -> str:
+def add_card(conn: sqlite3.Connection, column_id: str, title: str, details: str) -> str:
     column_id_int = _column_id_to_int(column_id)
     _get_column_board_id(conn, column_id_int)
 
@@ -208,7 +206,9 @@ def apply_ai_action(conn: sqlite3.Connection, action: dict[str, Any]) -> None:
     elif action_type == "delete_card":
         delete_card(conn, action["card_id"])
     elif action_type == "move_card":
-        move_card(conn, action["card_id"], action["column_id"], action.get("index") or 0)
+        move_card(
+            conn, action["card_id"], action["column_id"], action.get("index") or 0
+        )
     elif action_type == "rename_column":
         rename_column(conn, action["column_id"], action.get("title") or "")
     else:

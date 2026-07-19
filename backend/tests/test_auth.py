@@ -7,9 +7,7 @@ def test_session_starts_unauthenticated(client: TestClient):
 
 
 def test_login_rejects_wrong_credentials(client: TestClient):
-    response = client.post(
-        "/api/login", json={"username": "user", "password": "wrong"}
-    )
+    response = client.post("/api/login", json={"username": "user", "password": "wrong"})
     assert response.status_code == 401
 
 

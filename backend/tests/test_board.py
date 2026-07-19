@@ -33,9 +33,7 @@ def test_rename_column(client: TestClient):
     board = client.get("/api/board").json()
     column_id = board["columns"][0]["id"]
 
-    response = client.patch(
-        f"/api/board/columns/{column_id}", json={"title": "Ideas"}
-    )
+    response = client.patch(f"/api/board/columns/{column_id}", json={"title": "Ideas"})
     assert response.status_code == 200
     assert response.json()["columns"][0]["title"] == "Ideas"
 

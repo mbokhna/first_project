@@ -1,11 +1,12 @@
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 from fastapi.testclient import TestClient
 
 from app import db
-from app.main import app, get_db
+from app.deps import get_db
+from app.main import app
 
 
 @pytest.fixture
