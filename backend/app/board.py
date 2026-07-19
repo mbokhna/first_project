@@ -188,3 +188,28 @@ def move_card(
         _renumber_column(conn, source_column_id, source_ids)
     _renumber_column(conn, target_column_id_int, target_ids)
     conn.commit()
+
+
+def apply_ai_action(conn: sqlite3.Connection, action: dict[str, Any]) -> None:
+    """Apply one AI-proposed board action. Raises NotFoundError for unknown
+    types or ids that don't exist -- callers should skip failed actions
+    rather than aborting the whole chat turn."""
+    action_type = action.get("type")
+
+    if action_type == "add_card":
+        add_card(
+            conn,
+            action["column_id"],
+            action.get("title") or "Untitled",
+            action.get("details") or "",
+        )
+    elif action_type == "update_card":
+        update_card(conn, action["card_id"], action.get("title"), action.get("details"))
+    elif action_type == "delete_card":
+        delete_card(conn, action["card_id"])
+    elif action_type == "move_card":
+        move_card(conn, action["card_id"], action["column_id"], action.get("index") or 0)
+    elif action_type == "rename_column":
+        rename_column(conn, action["column_id"], action.get("title") or "")
+    else:
+        raise NotFoundError(f"Unknown AI action type: {action_type}")

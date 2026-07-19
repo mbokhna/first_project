@@ -96,13 +96,15 @@ Known gap carried into the end-of-Part-7 review: the frontend has no UI for edit
 
 ## Part 9: AI + Kanban context
 
-- [ ] Extend the backend AI call to always include the current board as JSON, the user's message, and conversation history in the prompt/context.
-- [ ] Use Structured Outputs so the AI responds with a natural-language reply plus an optional Kanban update payload.
-- [ ] Apply any returned Kanban update to the database.
+- [x] Extend the backend AI call to always include the current board as JSON, the user's message, and conversation history in the prompt/context.
+- [x] Use Structured Outputs so the AI responds with a natural-language reply plus an optional Kanban update payload.
+- [x] Apply any returned Kanban update to the database.
 
 **Tests:** backend tests with mocked/real AI responses verifying: a plain question returns a reply with no board change; a request like "add a card to Done" returns a structured update that correctly mutates the board.
 
 **Success criteria:** the backend reliably parses Structured Outputs and applies board updates only when the AI includes them; tests pass.
+
+**Note on "Structured Outputs":** implemented via OpenAI/OpenRouter's `response_format={"type": "json_object"}` (JSON mode) plus our own Pydantic validation, rather than strict `json_schema` mode — the free model we're using (`openai/gpt-oss-20b:free`) isn't guaranteed to support provider-side strict schema enforcement, so validating client-side (with a plain-text fallback on parse failure) is more robust. `POST /api/ai/chat` live-tested twice against the real API with no flakiness (`backend/tests/test_ai_chat.py`).
 
 ## Part 10: AI chat UI
 

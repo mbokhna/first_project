@@ -82,6 +82,16 @@ class MoveCardRequest(BaseModel):
     index: int
 
 
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list[ChatMessage] = []
+
+
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -191,6 +201,32 @@ def ai_ping(username: str = Depends(require_user)) -> dict[str, str]:
     except RuntimeError as error:
         raise HTTPException(status_code=503, detail=str(error))
     return {"reply": reply}
+
+
+@app.post("/api/ai/chat")
+def ai_chat(
+    body: ChatRequest,
+    username: str = Depends(require_user),
+    conn: sqlite3.Connection = Depends(get_db),
+) -> dict[str, Any]:
+    current_board = board.get_board(conn, username)
+    history = [{"role": m.role, "content": m.content} for m in body.history]
+
+    try:
+        result = ai.chat(current_board, history, body.message)
+    except RuntimeError as error:
+        raise HTTPException(status_code=503, detail=str(error))
+
+    for action in result.actions:
+        try:
+            board.apply_ai_action(conn, action.model_dump(exclude_none=True))
+        except (board.NotFoundError, KeyError):
+            continue
+
+    return {
+        "reply": result.reply,
+        "board": board.get_board(conn, username),
+    }
 
 
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
