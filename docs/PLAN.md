@@ -108,10 +108,14 @@ Known gap carried into the end-of-Part-7 review: the frontend has no UI for edit
 
 ## Part 10: AI chat UI
 
-- [ ] Add a sidebar widget with a full chat UI (message history, input box) styled per the project's color scheme.
-- [ ] Wire the sidebar to the Part 9 backend endpoint.
-- [ ] When the AI response includes a Kanban update, refresh the board UI automatically without a manual page reload.
+- [x] Add a sidebar widget with a full chat UI (message history, input box) styled per the project's color scheme.
+- [x] Wire the sidebar to the Part 9 backend endpoint.
+- [x] When the AI response includes a Kanban update, refresh the board UI automatically without a manual page reload.
 
 **Tests:** Playwright e2e test that sends a chat message requesting a board change and asserts the board UI updates accordingly; unit tests for the chat component's message rendering.
 
 **Success criteria:** a user can chat in the sidebar, ask the AI to create/edit/move a card, and see the Kanban board update live, matching the business requirements in the root `AGENTS.md`.
+
+Verified live end-to-end via Playwright against the real OpenRouter API through Docker: asked the assistant to add a specific card, the card appeared on the board with no manual reload (`frontend/tests/kanban.spec.ts`, "AI chat can add a card to the board"). Also fixed an unrelated flaky test along the way (`getByRole("alert")` was matching both our error message and Next.js's internal route-announcer element).
+
+**This completes the originally-planned MVP feature set (Parts 1-10), with the one deviation noted in Part 8/9: using the free `openai/gpt-oss-20b` model instead of the paid `openai/gpt-oss-120b`, per user instruction to avoid OpenRouter billing.**

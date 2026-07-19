@@ -71,3 +71,29 @@ export const moveCardApi = (
     method: "POST",
     body: JSON.stringify({ column_id: columnId, index }),
   });
+
+export type ChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type ChatResult = {
+  reply: string;
+  board: BoardData;
+};
+
+export const sendChatMessage = async (
+  message: string,
+  history: ChatMessage[]
+): Promise<ChatResult> => {
+  const response = await fetch("/api/ai/chat", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, history }),
+  });
+  if (!response.ok) {
+    throw new Error(`Chat request failed with ${response.status}`);
+  }
+  return (await response.json()) as ChatResult;
+};

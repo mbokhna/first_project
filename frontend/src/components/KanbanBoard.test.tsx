@@ -75,6 +75,25 @@ const mockBoardServer = () => {
         return respond(board);
       }
 
+      if (url.endsWith("/api/ai/chat") && method === "POST") {
+        if (/add a card/i.test(body.message)) {
+          const id = `card-${nextCardId++}`;
+          board = {
+            columns: board.columns.map((column, index) =>
+              index === 0
+                ? { ...column, cardIds: [...column.cardIds, id] }
+                : column
+            ),
+            cards: {
+              ...board.cards,
+              [id]: { id, title: "AI added card", details: "" },
+            },
+          };
+          return respond({ reply: "Added the card.", board });
+        }
+        return respond({ reply: `Echo: ${body.message}`, board });
+      }
+
       throw new Error(`Unhandled request: ${method} ${url}`);
     })
   );
@@ -127,5 +146,28 @@ describe("KanbanBoard", () => {
     await userEvent.click(deleteButton);
 
     expect(within(column).queryByText("New card")).not.toBeInTheDocument();
+  });
+
+  it("sends a chat message and shows the reply", async () => {
+    render(<KanbanBoard />);
+    await screen.findAllByTestId(/column-/i);
+
+    const chatInput = screen.getByLabelText("Chat message");
+    await userEvent.type(chatInput, "Hello there");
+    await userEvent.click(screen.getByRole("button", { name: /send/i }));
+
+    expect(await screen.findByText("Hello there")).toBeInTheDocument();
+    expect(await screen.findByText("Echo: Hello there")).toBeInTheDocument();
+  });
+
+  it("applies a board update returned from the chat", async () => {
+    render(<KanbanBoard />);
+    await screen.findAllByTestId(/column-/i);
+
+    const chatInput = screen.getByLabelText("Chat message");
+    await userEvent.type(chatInput, "Please add a card for testing");
+    await userEvent.click(screen.getByRole("button", { name: /send/i }));
+
+    expect(await screen.findByText("AI added card")).toBeInTheDocument();
   });
 });

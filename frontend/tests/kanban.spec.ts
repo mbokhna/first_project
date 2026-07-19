@@ -15,7 +15,7 @@ test("requires login before showing the board", async ({ page }) => {
   await page.getByLabel("Username").fill("user");
   await page.getByLabel("Password").fill("wrong");
   await page.getByRole("button", { name: /sign in/i }).click();
-  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page.getByText("Invalid username or password.")).toBeVisible();
 });
 
 test("logs in and out", async ({ page }) => {
@@ -91,4 +91,26 @@ test("moves a card between columns", async ({ page }) => {
   await page.mouse.up();
 
   await expect(targetColumn.getByText("Card to move")).toBeVisible();
+});
+
+test("AI chat can add a card to the board", async ({ page }) => {
+  await login(page);
+  const firstColumn = page.locator('[data-testid^="column-"]').first();
+  const columnId = await firstColumn.getAttribute("data-testid");
+
+  const chatInput = page.getByLabel("Chat message");
+  await chatInput.fill(
+    `Add a card titled "AI e2e card" to the column with id ${columnId?.replace(
+      "column-",
+      ""
+    )}.`
+  );
+  await page.getByRole("button", { name: /send/i }).click();
+
+  await expect(page.getByTestId("chat-message-assistant")).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(firstColumn.getByText("AI e2e card")).toBeVisible({
+    timeout: 30_000,
+  });
 });
