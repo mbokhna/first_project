@@ -48,7 +48,14 @@ test("renames a column and it persists after reload", async ({ page }) => {
   const firstColumn = page.locator('[data-testid^="column-"]').first();
   const titleInput = firstColumn.getByLabel("Column title");
   await titleInput.fill("Renamed Column");
-  await titleInput.blur();
+  await Promise.all([
+    page.waitForResponse(
+      (res) =>
+        res.url().includes("/api/board/columns/") &&
+        res.request().method() === "PATCH"
+    ),
+    titleInput.blur(),
+  ]);
 
   await page.reload();
   await expect(page.getByRole("heading", { name: "Kanban Studio" })).toBeVisible();

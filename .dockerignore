@@ -1,0 +1,23 @@
+# Keeps the Docker build context small and prevents host-platform
+# artifacts (e.g. node_modules native binaries, Python venvs) from
+# leaking into images that install their own inside the container.
+
+.git/
+.env
+.env.example
+
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/test-results/
+frontend/playwright-report/
+
+backend/.venv/
+backend/data/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/.ruff_cache/
+
+docs/
+*.md

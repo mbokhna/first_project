@@ -64,6 +64,7 @@ const mockBoardServer = () => {
 
       if (url.includes("/api/board/cards/") && method === "DELETE") {
         const cardId = url.split("/api/board/cards/")[1];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [cardId]: _removed, ...remainingCards } = board.cards;
         board = {
           columns: board.columns.map((column) => ({

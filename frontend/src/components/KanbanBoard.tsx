@@ -37,9 +37,11 @@ export const KanbanBoard = ({ onLogout }: KanbanBoardProps = {}) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
   const loadBoard = () => {
-    setLoadError(false);
     getBoard()
-      .then(setBoard)
+      .then((data) => {
+        setBoard(data);
+        setLoadError(false);
+      })
       .catch(() => setLoadError(true));
   };
 
